@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP Flash Tool — DrFunn</title>
+  <meta name="description" content="Browser-based ESP32 firmware flasher for DrFunn projects. No software required.">
+  <link rel="icon" href="https://drfunn.com/common/drfunn-favicon.png" type="image/png">
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      background-color: #f4f4f9;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      background: #ffffff;
+      padding: 1.5rem 1rem 1.5rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    header a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header img {
+      height: 48px;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+
+    header h1 {
+      display: inline;
+      font-size: 1.6rem;
+      font-weight: 600;
+      vertical-align: middle;
+      color: #333;
+    }
+
+    header p {
+      margin: 0.4rem 0 0;
+      font-weight: 300;
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    main {
+      flex: 1;
+      max-width: 620px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .tool-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+    }
+
+    #firmware-description {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
+      background: #f0f4ff;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.5;
+      min-height: 2.5rem;
+      display: none;
+    }
+
+    #chip-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: #007bff;
+      color: white;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.03em;
+    }
+
+    .install-row {
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    esp-web-install-button {
+      --esp-tools-button-color: #007bff;
+      --esp-tools-button-text-color: #fff;
+    }
+
+    #instructions {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    #no-selection-msg {
+      font-size: 0.85rem;
+      color: #888;
+      font-style: italic;
+    }
+
+    .requirements {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #eee;
+      font-size: 0.82rem;
+      color: #777;
+      line-height: 1.7;
+    }
+
+    .requirements strong {
+      color: #555;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 1.5rem;
+      background: #fff;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #888;
+    }
+
+    footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    @media (max-width: 480px) {
+      main { margin: 1.5rem auto; }
+      .tool-card { padding: 1.5rem 1.2rem; }
+      .install-row { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="https://drfunn.com">
+      <img src="https://drfunn.com/common/drfunn-transparent-200x200.png" alt="DrFunn logo">
+      <h1>ESP Flash Tool</h1>
+    </a>
+    <p>Browser-based firmware installer &mdash; no software required</p>
+  </header>
+
+  <main>
+    <div class="tool-card">
+
+      <label for="firmware-select">Select firmware</label>
+      <select id="firmware-select">
+        <option value="">— choose a build —</option>
+      </select>
+
+      <div id="firmware-description"></div>
+
+      <div class="install-row">
+        <esp-web-install-button id="install-btn" style="display:none"></esp-web-install-button>
+        <span id="no-selection-msg">Select a firmware build above to continue.</span>
+        <span id="instructions" style="display:none">
+          Connect your ESP32 via USB-C, then click <strong>Install</strong>.<br>
+          Chrome will prompt you to select the serial port.
+        </span>
+      </div>
+
+      <div class="requirements">
+        <strong>Requirements:</strong> Google Chrome or Microsoft Edge (Web Serial API required).
+        Works on Chromebook, Windows, and Mac. Not supported on iOS or Firefox.
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <a href="https://drfunn.com">drfunn.com</a> &mdash; ESP Flash Tool
+  </footer>
+
+  <script>
+    const select = document.getElementById('firmware-select');
+    const descDiv = document.getElementById('firmware-description');
+    const installBtn = document.getElementById('install-btn');
+    const noSelMsg = document.getElementById('no-selection-msg');
+    const instructions = document.getElementById('instructions');
+
+    let catalog = [];
+
+    fetch('firmware/catalog.json')
+      .then(r => r.json())
+      .then(data => {
+        catalog = data;
+        data.forEach((entry, i) => {
+          const opt = document.createElement('option');
+          opt.value = i;
+          opt.textContent = entry.display;
+          select.appendChild(opt);
+        });
+      })
+      .catch(() => {
+        const opt = document.createElement('option');
+        opt.textContent = 'Failed to load firmware catalog';
+        opt.disabled = true;
+        select.appendChild(opt);
+      });
+
+    select.addEventListener('change', () => {
+      const idx = select.value;
+      if (idx === '') {
+        descDiv.style.display = 'none';
+        installBtn.style.display = 'none';
+        noSelMsg.style.display = 'inline';
+        instructions.style.display = 'none';
+        return;
+      }
+
+      const entry = catalog[idx];
+      descDiv.innerHTML = `<span id="chip-badge">${entry.chip}</span><br>${entry.description}`;
+      descDiv.style.display = 'block';
+
+      installBtn.setAttribute('manifest', entry.manifest);
+      installBtn.style.display = 'inline-block';
+      noSelMsg.style.display = 'none';
+      instructions.style.display = 'inline';
+    });
+  </script>
+
+</body>
+</html>

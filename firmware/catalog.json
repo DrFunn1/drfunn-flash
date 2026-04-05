@@ -1,0 +1,8 @@
+[
+  {
+    "display": "SereneShrooms — MushroomDriver (2026-04-04)",
+    "chip": "ESP32-S3",
+    "description": "8-node ESP32-S3 mushroom colony art installation. UM FeatherS3. ESP-NOW mesh, FastLED, VS1053 audio, VL53L0X touch sensors, AsyncWebServer dashboard.",
+    "manifest": "firmware/serene-shrooms-20260404.manifest.json"
+  }
+]
